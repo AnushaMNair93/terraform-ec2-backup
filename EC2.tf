@@ -1,13 +1,14 @@
 resource "aws_instance" "my_instance" {
-  ami           = "ami-0d8f6eb4f641ef691" # Amazon Linux 2 AMI for eu-west-2 region
-  instance_type = "t2.micro"
+  ami           = var.ami # Amazon Linux 2 AMI for eu-west-2 region
+  instance_type = var.instance_type
 
   associate_public_ip_address = true
 
   vpc_security_group_ids = [aws_security_group.my_sg.id]
 
   tags = {
-    Name = "MyEC2Instance"
+    Name        = "MyEC2Instance"
+    Environment = "Dev"
   }
 
   provisioner "remote-exec" {
