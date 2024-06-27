@@ -1,3 +1,6 @@
+//
+// IAM role and policy for access
+//
 resource "aws_iam_role" "ec2_role" {
   name = "ec2_backup_role"
 
@@ -14,7 +17,6 @@ resource "aws_iam_role" "ec2_role" {
     ]
   })
 }
-
 resource "aws_iam_policy" "ec2_s3_policy" {
   name = "ec2_s3_policy"
 
@@ -32,12 +34,10 @@ resource "aws_iam_policy" "ec2_s3_policy" {
     ]
   })
 }
-
 resource "aws_iam_role_policy_attachment" "ec2_role_attachment" {
   role       = aws_iam_role.ec2_role.name
   policy_arn = aws_iam_policy.ec2_s3_policy.arn
 }
-
 resource "aws_instance" "my_instance" {
   ami                    = var.ami
   instance_type          = var.instance_type
@@ -45,18 +45,16 @@ resource "aws_instance" "my_instance" {
   vpc_security_group_ids = [aws_security_group.my_sg.id]
 
   tags = {
-    Name        = "MyEC2Instance"
+    Name        = "EC2Instance"
     Environment = "Development"
   }
 
   iam_instance_profile = aws_iam_instance_profile.ec2_instance_profile.name
-
   provisioner "remote-exec" {
     inline = [
       "sudo yum install -y aws-cli",
       "echo '0 2 * * * ~/backup-script.sh' | crontab -"
     ]
-
     connection {
       type        = "ssh"
       user        = "ec2-user"
@@ -64,11 +62,9 @@ resource "aws_instance" "my_instance" {
       host        = self.public_ip
     }
   }
-
   provisioner "file" {
     source      = "backup-script.sh"
     destination = "~/backup-script.sh"
-
     connection {
       type        = "ssh"
       user        = "ec2-user"
@@ -77,7 +73,6 @@ resource "aws_instance" "my_instance" {
     }
   }
 }
-
 resource "aws_iam_instance_profile" "ec2_instance_profile" {
   name = "ec2_instance_profile"
   role = aws_iam_role.ec2_role.name
