@@ -1,8 +1,8 @@
 #!/bin/bash
 TIMESTAMP=$(date +"%Y%m%d%H%M%S")
 BACKUP_DIR=~/backup
-TARGET_DIR=/path/to/your/directory
-S3_BUCKET="my-backup-bucket"
+TARGET_DIR=/path/to/directory
+S3_BUCKET="backup-bucket"
 BACKUP_FILE="$BACKUP_DIR/backup-$TIMESTAMP.tar.gz"
 
 mkdir -p $BACKUP_DIR
